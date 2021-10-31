@@ -10,12 +10,12 @@ import (
 
 // InitMongoDB ...
 func InitMongoDB() *mongo.Collection {
-
+	ctx := context.Background()
 	env := Root()
 
 	clientOptions := options.Client().ApplyURI(env.Uri)
 
-	client, err := mongo.Connect(context.TODO(), clientOptions)
+	client, err := mongo.Connect(ctx, clientOptions)
 
 	if err != nil {
 		log.Fatal(err)
@@ -27,7 +27,8 @@ func InitMongoDB() *mongo.Collection {
 }
 
 func pingDB(db *mongo.Client) {
-	err := db.Ping(context.TODO(), nil)
+	ctx := context.Background()
+	err := db.Ping(ctx, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
