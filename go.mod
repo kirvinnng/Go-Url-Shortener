@@ -3,6 +3,7 @@ module github.com/maximo-torterolo-ambrosini/Go-Url-Shortener
 go 1.17
 
 require (
+	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
 	github.com/gofiber/fiber/v2 v2.21.0
 	github.com/joho/godotenv v1.4.0
 	go.mongodb.org/mongo-driver v1.7.3

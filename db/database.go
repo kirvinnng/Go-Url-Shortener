@@ -8,22 +8,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Shortened struct {
-	Hash string `json:"hash"`
-	Url  string `json:"url"`
-}
-
-//MongoCollection ...
-type MongoCollection struct {
-	CollectionDB *mongo.Collection
-}
-
 // InitMongoDB ...
-func InitMongoDB() *MongoCollection {
+func InitMongoDB() *mongo.Collection {
 
 	env := Root()
 
-	clientOptions := options.Client().ApplyURI(env.uri)
+	clientOptions := options.Client().ApplyURI(env.Uri)
 
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 
@@ -32,9 +22,8 @@ func InitMongoDB() *MongoCollection {
 	}
 
 	pingDB(client)
-	cl := client.Database(env.name).Collection("information")
-
-	return &MongoCollection{cl}
+	cl := client.Database(env.Name).Collection("information")
+	return cl
 }
 
 func pingDB(db *mongo.Client) {

@@ -6,11 +6,13 @@ import (
 	"os"
 )
 
+//ConfigRoot ...
 type ConfigRoot struct {
-	name string
-	uri  string
+	Name string
+	Uri  string
 }
 
+//Root ...
 func Root() ConfigRoot {
 
 	env := godotenv.Load()
@@ -21,7 +23,7 @@ func Root() ConfigRoot {
 	DB := os.Getenv("DB_NAME")
 
 	return ConfigRoot{
-		name: DB,
-		uri:  URI,
+		Name: DB,
+		Uri:  URI,
 	}
 }

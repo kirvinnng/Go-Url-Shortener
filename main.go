@@ -1,14 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
+	"github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/api"
 	"github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/db"
-	//"go.mongodb.org/mongo-driver" // DRIVER to install
+	"github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/hash"
 )
 
 func main() {
@@ -17,7 +19,7 @@ func main() {
 	if env != nil {
 		log.Fatal("Error loading .env file")
 	}
-	db.InitMongoDB()
+
 	// Configuring port
 	PORT := ":" + os.Getenv("PORT")
 	if PORT == ":" {
@@ -31,10 +33,9 @@ func main() {
 		AppName:      "Url Shortener",
 	})
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		c.Format("<h1>Maximoooo</h1>")
-		return c.SendStatus(http.StatusCreated)
-	})
+	app.Use(logger.New())
+
+	//app.Static()
 
 	app.Listen(PORT)
 }
