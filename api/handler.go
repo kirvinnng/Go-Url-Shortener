@@ -83,6 +83,7 @@ func createNewUrlWithHash(originalUrl string) {
 	}
 
 	//* Insert this new url with the hash
+
 	resp := ResponseMongo{
 		Hash:         uriHash,
 		OriginalUrl:  originalUrl,
