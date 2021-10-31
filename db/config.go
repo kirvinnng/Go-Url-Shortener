@@ -8,8 +8,9 @@ import (
 
 //ConfigRoot ...
 type ConfigRoot struct {
-	Name string
-	Uri  string
+	Name       string
+	Uri        string
+	Collection string
 }
 
 //Root ...
@@ -22,9 +23,11 @@ func Root() ConfigRoot {
 	}
 	URI := os.Getenv("DB_URI")
 	DB := os.Getenv("DB_NAME")
+	COLLECTION := os.Getenv("DB_COLLECTION")
 
 	return ConfigRoot{
-		Name: DB,
-		Uri:  URI,
+		Name:       DB,
+		Uri:        URI,
+		Collection: COLLECTION,
 	}
 }

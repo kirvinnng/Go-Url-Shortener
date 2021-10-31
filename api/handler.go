@@ -1,13 +1,13 @@
 package api
 
 import (
-	"github.com/asaskevich/govalidator"
-	"github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/hash"
-
-	"github.com/gofiber/fiber/v2"
-
 	"log"
 	"net/http"
+	"net/url"
+
+	"github.com/asaskevich/govalidator"
+	"github.com/gofiber/fiber/v2"
+	"github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/hash"
 )
 
 var database = NewService()
@@ -18,12 +18,12 @@ type RequestClient struct {
 }
 
 type ResponseClient struct {
-	ShortenedURL string `json:"shortenedURL" `
-	Hash         string `json:"hash"         `
-	Valid        bool   `json:"isValidURL"`
+	Hash         string `json:"hash"          bson:"hash"    `
+	OriginalUrl  string `json:"original_url"  bson:"url"     `
+	ShortenedURL string `json:"shortenedURL"  bson:"url_hash"`
+	Valid        bool   `json:"isValidURL"                   `
 }
 
-//ShortUrl ...
 func ShortUrl(c *fiber.Ctx) error {
 
 	body := new(RequestClient)
@@ -36,7 +36,16 @@ func ShortUrl(c *fiber.Ctx) error {
 		res := ResponseClient{
 			Valid: false,
 		}
+		err := c.SendStatus(http.StatusNotAcceptable)
+		if err != nil {
+			log.Print(err)
+		}
 		return c.JSON(res)
+	}
+	// If the url doesn't start with http: its added
+	parseURL, _ := url.Parse(body.Url)
+	if parseURL.Scheme == "" {
+		body.Url = "http://" + body.Url
 	}
 
 	//* check if the url is valid in the database
@@ -50,10 +59,12 @@ func ShortUrl(c *fiber.Ctx) error {
 	} else {
 
 		//* if the url not exists
-		createNewUrlWithHash(c, body.Url)
-
-		return c.SendStatus(http.StatusCreated)
-
+		res := createNewUrlWithHash(c, body.Url)
+		err := c.SendStatus(http.StatusCreated)
+		if err != nil {
+			log.Print(err)
+		}
+		return c.JSON(res)
 	}
 }
 
@@ -66,13 +77,14 @@ func sendExistingUrlWithHash(c *fiber.Ctx, url string) ResponseClient {
 		Valid:        true,
 		Hash:         justHash,
 		ShortenedURL: urlWithHash,
+		OriginalUrl:  url,
 	}
 	//* if the url exists, the existing data is returned
 	return res
 
 }
 
-func createNewUrlWithHash(c *fiber.Ctx, originalUrl string) {
+func createNewUrlWithHash(c *fiber.Ctx, originalUrl string) ResponseClient {
 
 	uriHash := hash.GenerateHash(6)
 
@@ -84,11 +96,26 @@ func createNewUrlWithHash(c *fiber.Ctx, originalUrl string) {
 
 	//* Insert this new url with the hash
 
-	resp := ResponseMongo{
+	resp := ResponseClient{
 		Hash:         uriHash,
 		OriginalUrl:  originalUrl,
 		ShortenedURL: c.BaseURL() + "/" + uriHash,
+		Valid:        true,
 	}
 
 	database.InsertUrl(resp)
+	return resp
+}
+
+func Redirect(c *fiber.Ctx) error {
+
+	uriHash := c.Params("hash")
+
+	originalUrl, exist := database.SearchHash(uriHash)
+
+	if exist {
+		return c.Redirect(originalUrl, http.StatusMovedPermanently)
+	}
+
+	return c.SendStatus(http.StatusNotFound)
 }

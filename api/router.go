@@ -7,8 +7,7 @@ import (
 //SetRoutes ...
 func SetRoutes(app *fiber.App) {
 
-	//app.Get("/hash")
-	//app.Get("/")
+	app.Get("/:hash", Redirect)
 	app.Post("/", ShortUrl)
 
 }

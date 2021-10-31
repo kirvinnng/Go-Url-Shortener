@@ -22,7 +22,7 @@ func InitMongoDB() *mongo.Collection {
 	}
 
 	pingDB(client)
-	cl := client.Database(env.Name).Collection("information")
+	cl := client.Database(env.Name).Collection(env.Collection)
 	return cl
 }
 

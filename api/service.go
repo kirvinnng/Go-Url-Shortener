@@ -11,25 +11,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type ResponseMongo struct {
-	Hash         string `bson:"hash"`
-	OriginalUrl  string `bson:"url"`
-	ShortenedURL string `bson:"url_hash"`
-}
-
 //Service ...
 type MongoHandle struct {
 	*mongo.Collection
 }
 
 type MongoGateway interface {
-	InsertUrl(document ResponseMongo)
+	InsertUrl(document ResponseClient)
 
 	GetDocument(url string) (string, string)
 
 	VerifyUrl(url string) bool
 
 	VerifyHash(hashToFind string) bool
+
+	SearchHash(hash string) (string, bool)
 }
 
 type Service struct {
@@ -43,18 +39,27 @@ func NewService() Service {
 	return Service{mg}
 }
 
-func (h *MongoHandle) InsertUrl(document ResponseMongo) {
+func (h *MongoHandle) InsertUrl(document ResponseClient) {
 
 	ctx := context.Background()
+	data := struct {
+		Hash         string `bson:"hash"`
+		OriginalUrl  string `bson:"url"`
+		ShortenedUrl string `bson:"url_hash"`
+	}{
+		Hash:         document.Hash,
+		OriginalUrl:  document.OriginalUrl,
+		ShortenedUrl: document.ShortenedURL,
+	}
 
-	coll, err := h.InsertOne(ctx, document)
+	coll, err := h.InsertOne(ctx, data)
 
 	if err != nil {
 		log.Println(err)
 
 	}
 
-	fmt.Println("Inserted a single document: ", coll.InsertedID)
+	log.Println("Inserted a single document: ", coll.InsertedID)
 
 }
 
@@ -63,7 +68,11 @@ func (h *MongoHandle) GetDocument(url string) (string, string) {
 
 	ctx := context.Background()
 	var result bson.D
-	h.FindOne(ctx, bson.D{primitive.E{Key: "url", Value: url}}).Decode(&result)
+	err := h.FindOne(ctx, bson.D{primitive.E{Key: "url", Value: url}}).Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+
+	}
 
 	mp := result.Map()
 
@@ -71,6 +80,23 @@ func (h *MongoHandle) GetDocument(url string) (string, string) {
 	urlWithHash := fmt.Sprint(mp["url_hash"])
 
 	return justHash, urlWithHash
+}
+
+func (h *MongoHandle) SearchHash(hash string) (string, bool) {
+
+	ctx := context.Background()
+	var result bson.D
+	err := h.FindOne(ctx, bson.D{primitive.E{Key: "hash", Value: hash}}).Decode(&result)
+	if err != nil {
+		return "", false
+	}
+
+	mp := result.Map()
+	originalUrl := fmt.Sprint(mp["url"]) // this is nil!!
+
+	fmt.Println(originalUrl)
+
+	return originalUrl, true
 }
 
 func (h *MongoHandle) VerifyUrl(url string) bool {

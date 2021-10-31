@@ -8,8 +8,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
 	"github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/api"
-	//"github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/db"
-	// "github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/hash"
 )
 
 func main() {
@@ -38,5 +36,8 @@ func main() {
 
 	api.SetRoutes(app)
 
-	app.Listen(PORT)
+	err := app.Listen(PORT)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
