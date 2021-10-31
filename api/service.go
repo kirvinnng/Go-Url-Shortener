@@ -3,32 +3,32 @@ package api
 import (
 	"context"
 
-	_ "github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/db"
+	"github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/db"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 //Service ...
 type MongoHandle struct {
-	Mongo *mongo.Collection
+	*mongo.Collection
 }
 
-type Service struct {
-	user Gateway
-}
-
-type Gateway interface {
+type MongoGateway interface {
 	InsertUrl()
 	UpdateUrl()
 	VerifyHash(hashToFind string) bool
 }
 
-// func NewService() Service {
+type Service struct {
+	MongoGateway
+}
 
-// 	cl := db.InitMongoDB()
+func NewService() MongoGateway {
 
-// 	return Service{user: cl}
-// }
+	clie := db.InitMongoDB()
+	mg := &MongoHandle{clie}
+	return Service{mg}
+}
 
 func (h *MongoHandle) InsertUrl() {
 
@@ -40,7 +40,7 @@ func (h *MongoHandle) InsertUrl() {
 
 }
 
-func UpdateUrl() {
+func (h *MongoHandle) UpdateUrl() {
 
 }
 
@@ -48,7 +48,7 @@ func (h *MongoHandle) VerifyHash(hashToFind string) bool {
 
 	ctx := context.Background()
 	var result bson.D
-	err := h.Mongo.FindOne(ctx, bson.D{{"hash", hashToFind}}).Decode(&result)
+	err := h.FindOne(ctx, bson.D{{"hash", hashToFind}}).Decode(&result)
 
 	if err != nil {
 		return false

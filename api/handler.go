@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-//var database = NewService()
+var database = NewService()
 
 //Request ...
 type Request struct {
@@ -19,7 +19,7 @@ type Request struct {
 type Response struct {
 	Id           string `bson:"id"`
 	ShortenedURL string `json:"shortenedURL" bson:"url"`
-	Hash         string `json:"hash" bson:"hash"`
+	Hash         string `json:"hash" 		 bson:"hash"`
 	Valid        bool   `json:"isValidURL"`
 }
 
@@ -40,6 +40,8 @@ func ShortUrl(c *fiber.Ctx) error {
 
 	// c.Response()
 	// c.Request()
+
+	database.VerifyHash("xxx")
 
 	c.Format("<h1>Maximoooo</h1>")
 	return c.SendStatus(http.StatusCreated)
