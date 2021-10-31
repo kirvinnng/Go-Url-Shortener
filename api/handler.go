@@ -2,8 +2,9 @@ package api
 
 import (
 	"github.com/asaskevich/govalidator"
+	"github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/hash"
+
 	"github.com/gofiber/fiber/v2"
-	_ "github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/db"
 
 	"log"
 	"net/http"
@@ -13,13 +14,12 @@ var database = NewService()
 
 //Request ...
 type Request struct {
-	Url string `json:"name"`
+	Url string `json:"url"`
 }
 
 type Response struct {
-	ID           string `bson:"id"`
-	ShortenedURL string `json:"shortenedURL" bson:"url"`
-	Hash         string `json:"hash"         bson:"hash"`
+	ShortenedURL string `json:"shortenedURL" `
+	Hash         string `json:"hash"         `
 	Valid        bool   `json:"isValidURL"`
 }
 
@@ -27,22 +27,67 @@ type Response struct {
 func ShortUrl(c *fiber.Ctx) error {
 
 	body := new(Request)
-	err := c.BodyParser(body)
+	err := c.BodyParser(body) //* get the request url
 	if err != nil {
 		log.Fatal(err)
 	}
-	if !govalidator.IsURL(body.Url) {
+
+	if !govalidator.IsURL(body.Url) { //* check if the url is valid
 		res := Response{
 			Valid: false,
 		}
 		return c.JSON(res)
 	}
 
-	// c.Response()
-	// c.Request()
+	//* check if the url is valid in the database
+	if database.VerifyUrl(body.Url) {
 
-	database.VerifyHash("xxx")
+		//* if the url exists, the existing data is returned
+		res := sendExistingUrlWithHash(c, body.Url)
 
-	c.Format("<h1>Maximoooo</h1>")
-	return c.SendStatus(http.StatusCreated)
+		return c.JSON(res)
+
+	} else {
+
+		//* if the url not exists
+		createNewUrlWithHash(body.Url)
+
+		return c.SendStatus(http.StatusCreated)
+
+	}
+}
+
+func sendExistingUrlWithHash(c *fiber.Ctx, url string) Response {
+
+	//* get the hash & the url with the hash corresponding to the url
+	justHash, urlWithHash := database.GetDocument(url)
+
+	res := Response{
+		Valid:        true,
+		Hash:         justHash,
+		ShortenedURL: urlWithHash,
+	}
+	//* if the url exists, the existing data is returned
+	return res
+
+}
+
+func createNewUrlWithHash(originalUrl string) {
+
+	uriHash := hash.GenerateHash(6)
+
+	//* check if the generated hash isn't in the database
+	for database.VerifyHash(uriHash) {
+		uriHash = hash.GenerateHash(6)
+
+	}
+
+	//* Insert this new url with the hash
+	resp := ResponseMongo{
+		Hash:         uriHash,
+		OriginalUrl:  originalUrl,
+		ShortenedURL: "maxi.com" + "/" + uriHash,
+	}
+
+	database.InsertUrl(resp)
 }

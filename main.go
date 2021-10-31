@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -37,7 +36,7 @@ func main() {
 
 	//app.Static()
 
-	// api.SetRoutes(app)
+	api.SetRoutes(app)
 
 	app.Listen(PORT)
 }

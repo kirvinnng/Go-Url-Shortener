@@ -15,6 +15,7 @@ type ConfigRoot struct {
 //Root ...
 func Root() ConfigRoot {
 
+	// Setting enviorment variables🔥
 	env := godotenv.Load()
 	if env != nil {
 		log.Fatal("Error loading .env file")
