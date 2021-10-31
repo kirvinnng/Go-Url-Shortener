@@ -12,12 +12,12 @@ import (
 
 var database = NewService()
 
-//Request ...
-type Request struct {
+//RequestClient ...
+type RequestClient struct {
 	Url string `json:"url"`
 }
 
-type Response struct {
+type ResponseClient struct {
 	ShortenedURL string `json:"shortenedURL" `
 	Hash         string `json:"hash"         `
 	Valid        bool   `json:"isValidURL"`
@@ -26,14 +26,14 @@ type Response struct {
 //ShortUrl ...
 func ShortUrl(c *fiber.Ctx) error {
 
-	body := new(Request)
+	body := new(RequestClient)
 	err := c.BodyParser(body) //* get the request url
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	if !govalidator.IsURL(body.Url) { //* check if the url is valid
-		res := Response{
+		res := ResponseClient{
 			Valid: false,
 		}
 		return c.JSON(res)
@@ -50,19 +50,19 @@ func ShortUrl(c *fiber.Ctx) error {
 	} else {
 
 		//* if the url not exists
-		createNewUrlWithHash(body.Url)
+		createNewUrlWithHash(c, body.Url)
 
 		return c.SendStatus(http.StatusCreated)
 
 	}
 }
 
-func sendExistingUrlWithHash(c *fiber.Ctx, url string) Response {
+func sendExistingUrlWithHash(c *fiber.Ctx, url string) ResponseClient {
 
 	//* get the hash & the url with the hash corresponding to the url
 	justHash, urlWithHash := database.GetDocument(url)
 
-	res := Response{
+	res := ResponseClient{
 		Valid:        true,
 		Hash:         justHash,
 		ShortenedURL: urlWithHash,
@@ -72,7 +72,7 @@ func sendExistingUrlWithHash(c *fiber.Ctx, url string) Response {
 
 }
 
-func createNewUrlWithHash(originalUrl string) {
+func createNewUrlWithHash(c *fiber.Ctx, originalUrl string) {
 
 	uriHash := hash.GenerateHash(6)
 
@@ -87,7 +87,7 @@ func createNewUrlWithHash(originalUrl string) {
 	resp := ResponseMongo{
 		Hash:         uriHash,
 		OriginalUrl:  originalUrl,
-		ShortenedURL: "maxi.com" + "/" + uriHash,
+		ShortenedURL: c.BaseURL() + "/" + uriHash,
 	}
 
 	database.InsertUrl(resp)
