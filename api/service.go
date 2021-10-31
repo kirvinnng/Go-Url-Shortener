@@ -5,6 +5,7 @@ import (
 
 	"github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/db"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -48,10 +49,7 @@ func (h *MongoHandle) VerifyHash(hashToFind string) bool {
 
 	ctx := context.Background()
 	var result bson.D
-	err := h.FindOne(ctx, bson.D{{"hash", hashToFind}}).Decode(&result)
+	err := h.FindOne(ctx, bson.D{primitive.E{Key: "hash", Value: hashToFind}}).Decode(&result)
 
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }

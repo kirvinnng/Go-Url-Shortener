@@ -17,9 +17,9 @@ type Request struct {
 }
 
 type Response struct {
-	Id           string `bson:"id"`
+	ID           string `bson:"id"`
 	ShortenedURL string `json:"shortenedURL" bson:"url"`
-	Hash         string `json:"hash" 		 bson:"hash"`
+	Hash         string `json:"hash"         bson:"hash"`
 	Valid        bool   `json:"isValidURL"`
 }
 
