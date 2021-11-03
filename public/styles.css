@@ -72,15 +72,13 @@ body {
     flex-direction: row;
 }
 
-a {
-    color: #f3f5fc;
-}
-
 .result-card {
     display: flex;
     align-items: center;
     flex-direction: column;
-    width: 25vw;
+    width: 45vw;
+    max-width: 60vw;
+    min-width: 30vw;
     height: 10vh;
     background-color: #f3f5fc;
     justify-content: center;
@@ -88,7 +86,9 @@ a {
 
 .result-card a {
     color: #4feeb9;
+
 }
+
 .description {
     color: #4feeb9;
     margin-bottom: 15px;
@@ -120,31 +120,30 @@ a {
         padding-right: 30px;
         padding-left: 30px;
         width: 40vw;
-        height: 10vh;
+        height: 20vh;
         text-align: center;
     }
     .result a {
-        font-size: 12px;
+        font-size: 1rem;
     }
 }
 
-@media screen and (max-height: 640px) and (orientation: landscape) {
+@media screen and (max-height: 800px) and (orientation: landscape) {
     .result-card {
-        height: 25vh;
+        height: 14vh;
     }
     #url {
         height: 9vh;
+        width: 60vh;
     }
     #button {
         height: 9vh;
     }
 }
 
-@media screen and (max-width: 812px) and (orientation: landscape) {
+@media screen and (max-width: 1000px) and (orientation: landscape) {
     .result-card {
-        width: 70vh;
+        width: 58vh;
     }
-    #url {
-        width: 60vh;
-    }
+   
 }

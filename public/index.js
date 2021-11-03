@@ -3,7 +3,7 @@ const generateCard = (res) => {
 
     if (res.isValidURL) {
 
-        card.innerHTML = `<div class="result-card"><p>Here is your shortened URL</p>
+        card.innerHTML = `<div class="result-card"><h4>Here is your shortened URL</h4>
         <a target="_blank" id="shortened-url" href=${res.shortenedURL}> ${res.shortenedURL} </a></div>
         <button id="copy">Copy</button>
         `
