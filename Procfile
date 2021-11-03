@@ -1,1 +1,1 @@
-web: ./bin/Go-Url-Shortener
+web: mv ./bin/Go-Url-Shortener ./; ./Go-Url-Shortener
