@@ -76,7 +76,7 @@ body {
     display: flex;
     align-items: center;
     flex-direction: column;
-    width: 50vw;
+    width: 45vw;
     max-width: 60vw;
     min-width: 30vw;
     height: 10vh;
@@ -130,7 +130,7 @@ body {
 
 @media screen and (max-height: 800px) and (orientation: landscape) {
     .result-card {
-        height: 25vh;
+        height: 14vh;
     }
     #url {
         height: 9vh;
