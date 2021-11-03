@@ -14,7 +14,7 @@ func main() {
 	// Setting enviorment variables🔥
 	env := godotenv.Load()
 	if env != nil {
-		log.Fatal("Error loading .env file")
+		log.Print("Error loading .env file")
 	}
 
 	// Configuring port
