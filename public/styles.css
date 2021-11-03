@@ -109,9 +109,7 @@ body {
         width: 45vw;
     }
     #button {
-        font-size: 14px;
-        padding-left: 3vw;
-        padding-right: 3vw;
+        height: 8vh;
     }
 }
 
@@ -130,11 +128,11 @@ body {
 
 @media screen and (max-height: 800px) and (orientation: landscape) {
     .result-card {
-        height: 14vh;
+        height: 20vh;
     }
     #url {
         height: 9vh;
-        width: 60vh;
+        width: 45vw;
     }
     #button {
         height: 9vh;
@@ -143,7 +141,7 @@ body {
 
 @media screen and (max-width: 1000px) and (orientation: landscape) {
     .result-card {
-        width: 58vh;
+        width: 58vw;
     }
    
 }
