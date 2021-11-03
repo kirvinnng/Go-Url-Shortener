@@ -32,7 +32,7 @@ func main() {
 
 	app.Use(logger.New())
 
-	//app.Static()
+	app.Static("/", "./public")
 
 	api.SetRoutes(app)
 

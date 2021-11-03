@@ -19,7 +19,7 @@ type RequestClient struct {
 
 type ResponseClient struct {
 	Hash         string `json:"hash"          bson:"hash"    `
-	OriginalUrl  string `json:"original_url"  bson:"url"     `
+	OriginalUrl  string `json:"originalURL"  bson:"url"     `
 	ShortenedURL string `json:"shortenedURL"  bson:"url_hash"`
 	Valid        bool   `json:"isValidURL"                   `
 }
@@ -118,4 +118,8 @@ func Redirect(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(http.StatusNotFound)
+}
+
+func Index(c *fiber.Ctx) error {
+	return c.SendFile("./template/index.html")
 }
