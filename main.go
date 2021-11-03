@@ -6,16 +6,16 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	// "github.com/joho/godotenv"
+	"github.com/joho/godotenv"
 	"github.com/maximo-torterolo-ambrosini/Go-Url-Shortener/api"
 )
 
 func main() {
 	// Setting enviorment variables🔥
-	// env := godotenv.Load()
-	// if env != nil {
-	// 	log.Print("Error loading .env file")
-	// }
+	env := godotenv.Load()
+	if env != nil {
+		log.Print("Error loading .env file | Ignore this if you're deploying in heroku!")
+	}
 
 	// Configuring port
 	PORT := ":" + os.Getenv("PORT")

@@ -1,8 +1,8 @@
 package db
 
 import (
-	// "github.com/joho/godotenv"
-	// "log"
+	"github.com/joho/godotenv"
+	"log"
 	"os"
 )
 
@@ -17,10 +17,10 @@ type ConfigRoot struct {
 func Root() ConfigRoot {
 
 	// Setting enviorment variables🔥
-	// env := godotenv.Load()
-	// if env != nil {
-	// 	log.Fatal("Error loading .env file")
-	// }
+	env := godotenv.Load()
+	if env != nil {
+		log.Print("Error loading .env file | Ignore this if you're deploying in heroku!")
+	}
 	URI := os.Getenv("DB_URI")
 	DB := os.Getenv("DB_NAME")
 	COLLECTION := os.Getenv("DB_COLLECTION")
